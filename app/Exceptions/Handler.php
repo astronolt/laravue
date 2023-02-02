@@ -48,11 +48,13 @@ class Handler extends ExceptionHandler
             return $this->apiError('Not Found', 404);
         });
 
-
         $this->renderable(function (ApiException $exception) {
+            if ($exception->hasDetails()) {
+                return response()->json($exception->getDetails(), $exception->getCode());
+            }
+
             return $this->apiError($exception->getMessage(), $exception->getCode());
         });
-
 
         $this->renderable(function (Throwable $exception) {
             return $this->apiError('Internal Server Error', 500);
